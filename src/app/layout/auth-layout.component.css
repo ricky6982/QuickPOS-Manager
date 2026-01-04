@@ -1,0 +1,39 @@
+﻿.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 220px;
+}
+
+mat-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.toolbar-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.logo {
+  height: 32px;
+}
+
+.username {
+  font-weight: 500;
+}
+
+.content {
+  padding: 16px;
+}
+
