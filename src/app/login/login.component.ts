@@ -1,4 +1,4 @@
-﻿import { Component, inject } from '@angular/core';
+﻿import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -25,8 +25,8 @@ export class LoginComponent {
     password: ['', Validators.required]
   });
 
-  busy = false;
-  error: string | null = null;
+  busy = signal(false);
+  error = signal<string | null>(null);
 
 
   async submit() {
@@ -35,8 +35,8 @@ export class LoginComponent {
       return;
     }
 
-    this.busy = true;
-    this.error = null;
+    this.busy.set(true);
+    this.error.set(null);
 
     const { username, password } = this.form.value as { username: string; password: string };
     try {
@@ -44,12 +44,14 @@ export class LoginComponent {
       if (ok) {
         await this.router.navigateByUrl('/');
       } else {
-        this.error = 'Credenciales inválidas';
+        this.error.set('Credenciales inválidas');
       }
-    } catch (e) {
-      this.error = 'Error de conexión';
+    } catch (e: any) {
+      // Extraer el mensaje de error del objeto Error
+      const errorMessage = e?.message || 'Error de conexión';
+      this.error.set(errorMessage);
     } finally {
-      this.busy = false;
+      this.busy.set(false);
     }
   }
 }
