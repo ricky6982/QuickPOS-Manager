@@ -1,0 +1,84 @@
+<div class="organizer-list-container">
+  <div class="header">
+    <h2>Organizadores</h2>
+    <button mat-raised-button color="primary" (click)="create()">
+      <mat-icon>add</mat-icon>
+      Crear Organizador
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table mat-table [dataSource]="organizers()" class="organizers-table">
+
+        <!-- Columna Nombre -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let organizer">{{ organizer.name }}</td>
+        </ng-container>
+
+        <!-- Columna RUC/Tax ID -->
+        <ng-container matColumnDef="taxId">
+          <th mat-header-cell *matHeaderCellDef>CUIT</th>
+          <td mat-cell *matCellDef="let organizer">{{ organizer.taxId || '-' }}</td>
+        </ng-container>
+
+        <!-- Columna Estado -->
+        <ng-container matColumnDef="isActive">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let organizer">
+            <mat-chip [class.active-chip]="organizer.isActive" [class.inactive-chip]="!organizer.isActive">
+              {{ organizer.isActive ? 'Activo' : 'Inactivo' }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Columna Acciones -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let organizer">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="edit(organizer.id)"
+              aria-label="Editar organizador">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="delete(organizer)"
+              aria-label="Eliminar organizador">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <!-- Fila cuando no hay datos -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+            No hay organizadores disponibles
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    @if (totalItems() > 0) {
+      <app-pagination
+        [totalItems]="totalItems()"
+        [pageSize]="pageSize()"
+        [currentPage]="currentPage()"
+        (pageChange)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)">
+      </app-pagination>
+    }
+  }
+</div>
+

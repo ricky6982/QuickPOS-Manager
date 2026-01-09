@@ -1,4 +1,4 @@
-﻿import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
@@ -8,13 +8,13 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { CategoryService } from '../../services/category.service';
-import { Category } from '../../models';
-import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
-import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { OrganizerService } from '../../services/organizer.service';
+import { Organizer } from '../../models';
+import { PaginationComponent } from '../../../shared/components';
+import { ConfirmDialogComponent } from '../../../shared/components';
+
 @Component({
-  selector: 'app-category-list',
-  standalone: true,
+  selector: 'app-organizer-list',
   imports: [
     CommonModule,
     RouterModule,
@@ -27,79 +27,87 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
     MatDialogModule,
     PaginationComponent
   ],
-  templateUrl: './category-list.component.html',
-  styleUrls: ['./category-list.component.css']
+  templateUrl: './organizer-list.html',
+  styleUrl: './organizer-list.css'
 })
-export class CategoryListComponent implements OnInit {
-  private categoryService = inject(CategoryService);
+export class OrganizerListComponent implements OnInit {
+  private organizerService = inject(OrganizerService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
-  protected categories = signal<Category[]>([]);
+
+  protected organizers = signal<Organizer[]>([]);
   protected loading = signal(false);
   protected currentPage = signal(1);
   protected pageSize = signal(10);
   protected totalItems = signal(0);
-  displayedColumns: string[] = ['name', 'description', 'isActive', 'actions'];
+
+  displayedColumns: string[] = ['name', 'taxId', 'isActive', 'actions'];
+
   ngOnInit() {
-    this.loadCategories();
+    this.loadOrganizers();
   }
-  loadCategories() {
+
+  loadOrganizers() {
     this.loading.set(true);
-    this.categoryService.getAll(this.currentPage(), this.pageSize()).subscribe({
+    this.organizerService.getAll(this.currentPage(), this.pageSize()).subscribe({
       next: (response) => {
-        this.categories.set(response.items);
+        this.organizers.set(response.items);
         this.totalItems.set(response.totalItems);
         this.currentPage.set(response.pageNumber);
         this.loading.set(false);
       },
       error: (error) => {
-        this.snackBar.open(error.message || 'Error al cargar las categorías', 'Cerrar', {
+        this.snackBar.open(error.message || 'Error al cargar los organizadores', 'Cerrar', {
           duration: 3000
         });
         this.loading.set(false);
       }
     });
   }
+
   onPageChange(page: number) {
     this.currentPage.set(page);
-    this.loadCategories();
+    this.loadOrganizers();
   }
 
   onPageSizeChange(pageSize: number) {
     this.pageSize.set(pageSize);
     this.currentPage.set(1);
-    this.loadCategories();
+    this.loadOrganizers();
   }
-  createCategory() {
-    this.router.navigate(['/categories/new']);
+
+  create() {
+    this.router.navigate(['/organizers/new']);
   }
-  editCategory(id: string) {
-    debugger;
-    this.router.navigate(['/categories/edit', id]);
+
+  edit(id: string) {
+    this.router.navigate(['/organizers/edit', id]);
   }
-  deleteCategory(category: Category) {
+
+  delete(organizer: Organizer) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
       data: {
-        title: 'Eliminar Categoría',
-        message: `¿Está seguro que desea eliminar la categoría "${category.name}"?`,
+        title: 'Eliminar Organizador',
+        message: `¿Está seguro que desea eliminar el organizador "${organizer.name}"?`,
         confirmText: 'Eliminar',
         cancelText: 'Cancelar'
       }
     });
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.loading.set(true);
-        this.categoryService.delete(category.id).subscribe({
+        this.organizerService.delete(organizer.id).subscribe({
           next: () => {
-            this.snackBar.open('Categoría eliminada exitosamente', 'Cerrar', {
+            this.snackBar.open('Organizador eliminado exitosamente', 'Cerrar', {
               duration: 3000
             });
-            this.loadCategories();
+            this.loadOrganizers();
           },
           error: (error) => {
-            this.snackBar.open(error.message || 'Error al eliminar la categoría', 'Cerrar', {
+            this.snackBar.open(error.message || 'Error al eliminar el organizador', 'Cerrar', {
               duration: 3000
             });
             this.loading.set(false);

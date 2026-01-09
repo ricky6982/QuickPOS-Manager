@@ -24,10 +24,10 @@ export class PaginationComponent {
   @Output() pageChange = new EventEmitter<number>();
   @Output() pageSizeChange = new EventEmitter<number>();
 
-  pageSizeOptions = [20, 50, 100];
+  pageSizeOptions = [10, 20, 50];
 
   private _totalItems = signal(0);
-  private _pageSize = signal(20);
+  private _pageSize = signal(10);
   private _currentPage = signal(1);
   protected totalPages = computed(() => {
     const total = this._totalItems();
