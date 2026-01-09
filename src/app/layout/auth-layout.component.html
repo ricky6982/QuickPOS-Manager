@@ -1,32 +1,34 @@
-﻿<mat-toolbar color="primary">
-  <div class="toolbar-left">
-    <img src="/logo.svg" alt="logo" class="logo" />
-    <span class="apptitle">{{ title() }}</span>
-  </div>
-
-  <div class="toolbar-right">
-    @if (username()) {
-      <span class="username">{{ username() }}</span>
-    }
-    <button mat-button (click)="logout()">Cerrar sesión</button>
-  </div>
-</mat-toolbar>
-
-<mat-sidenav-container class="sidenav-container">
-  <mat-sidenav mode="side" opened class="sidenav">
-    <mat-nav-list>
-      <a mat-list-item routerLink="/organizers">Organizadores</a>
-      <a mat-list-item routerLink="/categories" routerLinkActive="active">Categorías</a>
-      <a mat-list-item routerLink="/">Productos</a>
-      <a mat-list-item routerLink="/">Ventas</a>
-      <a mat-list-item routerLink="/">Inventario</a>
-    </mat-nav-list>
-  </mat-sidenav>
-
-  <mat-sidenav-content>
-    <div class="content">
-      <router-outlet></router-outlet>
+﻿<div class="layout-container">
+  <mat-toolbar color="primary">
+    <div class="toolbar-left">
+      <img src="/logo.svg" alt="logo" class="logo" />
+      <span class="apptitle">{{ title() }}</span>
     </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+
+    <div class="toolbar-right">
+      @if (username()) {
+        <span class="username">{{ username() }}</span>
+      }
+      <button mat-button (click)="logout()">Cerrar sesión</button>
+    </div>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav mode="side" opened class="sidenav">
+      <mat-nav-list>
+        <a mat-list-item routerLink="/organizers">Organizadores</a>
+        <a mat-list-item routerLink="/categories" routerLinkActive="active">Categorías</a>
+        <a mat-list-item routerLink="/">Productos</a>
+        <a mat-list-item routerLink="/">Ventas</a>
+        <a mat-list-item routerLink="/">Inventario</a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <div class="content">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
 
