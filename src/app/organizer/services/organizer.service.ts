@@ -12,7 +12,7 @@ export class OrganizerService {
   private http = inject(HttpClient);
   private readonly apiUrl = '/api/organizer';
 
-  getAll(page: number = 1, pageSize: number = 20): Observable<PaginatedResponse<Organizer>> {
+  getAll(page: number = 1, pageSize: number = 10): Observable<PaginatedResponse<Organizer>> {
     return this.http.get<PaginatedResponse<Organizer>>(
       `${this.apiUrl}/paged?page=${page}&pageSize=${pageSize}`
     ).pipe(
