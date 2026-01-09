@@ -1,0 +1,30 @@
+﻿<div class="pagination-container">
+  <div class="pagination-info">
+    Mostrando {{ (currentPageValue - 1) * pageSizeValue + 1 }} -
+    {{ currentPageValue * pageSizeValue > totalItemsValue ? totalItemsValue : currentPageValue * pageSizeValue }}
+    de {{ totalItemsValue }} resultados
+  </div>
+
+  <div class="pagination-controls">
+    <button
+      mat-icon-button
+      [disabled]="!hasPrevious()"
+      (click)="previousPage()"
+      aria-label="Página anterior">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <span class="page-indicator">
+      Página {{ currentPageValue }} de {{ totalPagesValue }}
+    </span>
+
+    <button
+      mat-icon-button
+      [disabled]="!hasNext()"
+      (click)="nextPage()"
+      aria-label="Página siguiente">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+</div>
+

@@ -1,9 +1,12 @@
 import { Routes } from '@angular/router';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { CategoryListComponent } from './category/components/category-list/category-list.component';
+import { CategoryFormComponent } from './category/components/category-form/category-form.component';
+import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: DashboardComponent },
-  { path: 'dashboard', component: DashboardComponent },
+  { path: 'categories', component: CategoryListComponent, canActivate: [authGuard] },
+  { path: 'categories/new', component: CategoryFormComponent, canActivate: [authGuard] },
+  { path: 'categories/edit/:id', component: CategoryFormComponent, canActivate: [authGuard] },
   // add more protected child routes here
   { path: '**', redirectTo: '' }
 ];

@@ -1,0 +1,62 @@
+﻿<div class="form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ titleText }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (loading()) {
+        <div class="loading-container">
+          <mat-spinner></mat-spinner>
+        </div>
+      } @else {
+        <form [formGroup]="form" (ngSubmit)="submit()">
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="name" placeholder="Ingrese el nombre de la categoría" />
+            @if (form.get('name')?.invalid && form.get('name')?.touched) {
+              <mat-error>
+                @if (form.get('name')?.errors?.['required']) {
+                  El nombre es requerido
+                }
+                @if (form.get('name')?.errors?.['minlength']) {
+                  El nombre debe tener al menos 2 caracteres
+                }
+                @if (form.get('name')?.errors?.['maxlength']) {
+                  El nombre no puede exceder 100 caracteres
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descripción</mat-label>
+            <textarea
+              matInput
+              formControlName="description"
+              placeholder="Ingrese la descripción de la categoría"
+              rows="4">
+            </textarea>
+          </mat-form-field>
+
+          <div class="toggle-container">
+            <mat-slide-toggle formControlName="isActive" color="primary">
+              Categoría activa
+            </mat-slide-toggle>
+          </div>
+
+          <div class="actions">
+            <button mat-button type="button" (click)="cancel()">
+              Cancelar
+            </button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="loading()">
+              {{ submitButtonText }}
+            </button>
+          </div>
+        </form>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>
+
