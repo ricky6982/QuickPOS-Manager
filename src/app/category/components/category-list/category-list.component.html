@@ -75,7 +75,8 @@
         [totalItems]="totalItems()"
         [pageSize]="pageSize()"
         [currentPage]="currentPage()"
-        (pageChange)="onPageChange($event)">
+        (pageChange)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)">
       </app-pagination>
     }
   }

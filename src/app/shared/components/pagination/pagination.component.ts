@@ -2,10 +2,12 @@
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 @Component({
   selector: 'app-pagination',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatSelectModule, MatFormFieldModule],
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.css']
 })
@@ -20,8 +22,12 @@ export class PaginationComponent {
     this._currentPage.set(value);
   }
   @Output() pageChange = new EventEmitter<number>();
+  @Output() pageSizeChange = new EventEmitter<number>();
+
+  pageSizeOptions = [20, 50, 100];
+
   private _totalItems = signal(0);
-  private _pageSize = signal(10);
+  private _pageSize = signal(20);
   private _currentPage = signal(1);
   protected totalPages = computed(() => {
     const total = this._totalItems();
@@ -56,5 +62,9 @@ export class PaginationComponent {
     if (page >= 1 && page <= this.totalPages()) {
       this.pageChange.emit(page);
     }
+  }
+
+  onPageSizeChange(size: number) {
+    this.pageSizeChange.emit(size);
   }
 }

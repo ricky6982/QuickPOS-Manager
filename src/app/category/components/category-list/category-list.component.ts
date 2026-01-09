@@ -38,7 +38,7 @@ export class CategoryListComponent implements OnInit {
   protected categories = signal<Category[]>([]);
   protected loading = signal(false);
   protected currentPage = signal(1);
-  protected pageSize = signal(10);
+  protected pageSize = signal(20);
   protected totalItems = signal(0);
   displayedColumns: string[] = ['name', 'description', 'isActive', 'actions'];
   ngOnInit() {
@@ -63,6 +63,12 @@ export class CategoryListComponent implements OnInit {
   }
   onPageChange(page: number) {
     this.currentPage.set(page);
+    this.loadCategories();
+  }
+
+  onPageSizeChange(pageSize: number) {
+    this.pageSize.set(pageSize);
+    this.currentPage.set(1);
     this.loadCategories();
   }
   createCategory() {

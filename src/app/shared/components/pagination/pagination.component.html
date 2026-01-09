@@ -1,8 +1,22 @@
 ﻿<div class="pagination-container">
   <div class="pagination-info">
-    Mostrando {{ (currentPageValue - 1) * pageSizeValue + 1 }} -
-    {{ currentPageValue * pageSizeValue > totalItemsValue ? totalItemsValue : currentPageValue * pageSizeValue }}
-    de {{ totalItemsValue }} resultados
+    <div class="results-info">
+      Mostrando {{ (currentPageValue - 1) * pageSizeValue + 1 }} -
+      {{ currentPageValue * pageSizeValue > totalItemsValue ? totalItemsValue : currentPageValue * pageSizeValue }}
+      de {{ totalItemsValue }} resultados
+    </div>
+    <div class="page-size-selector">
+      | Filas por página
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-select
+          [value]="pageSizeValue"
+          (selectionChange)="onPageSizeChange($event.value)">
+          <mat-option *ngFor="let size of pageSizeOptions" [value]="size">
+            {{ size }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </div>
 
   <div class="pagination-controls">
