@@ -1,4 +1,4 @@
-﻿import { Component, signal, computed, OnInit, inject } from '@angular/core';
+﻿import { Component, signal, computed, OnInit, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -14,6 +14,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { AuthService } from '../auth.service';
+import { OrganizerStateService } from '../organizer/services/organizer-state.service';
 import { ApiResponse } from '../models';
 
 interface Organizer {
@@ -46,6 +47,7 @@ export class AuthLayoutComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
   private auth = inject(AuthService);
+  private organizerStateService = inject(OrganizerStateService);
 
   protected readonly title = signal('QuickPOS Manager');
   protected readonly username = computed(() => this.auth.getUsername());
@@ -76,7 +78,23 @@ export class AuthLayoutComponent implements OnInit {
     );
   });
 
+  constructor() {
+    // Effect para sincronizar el selectedOrganizer con el servicio de estado
+    effect(() => {
+      const selected = this.selectedOrganizer();
+      if (selected !== null) {
+        this.organizerStateService.setSelectedOrganizer(selected);
+      }
+    });
+  }
+
   ngOnInit() {
+    // Recuperar el organizador desde el servicio de estado
+    const savedOrganizer = this.organizerStateService.getSelectedOrganizer();
+    if (savedOrganizer) {
+      this.selectedOrganizer.set(savedOrganizer);
+    }
+
     this.loadOrganizers();
 
     // Sincronizar el FormControl con el signal
@@ -89,9 +107,12 @@ export class AuthLayoutComponent implements OnInit {
     this.http.get<ApiResponse<Organizer[]>>('/api/organizer/active').subscribe({
       next: (response) => {
         this.organizers.set(response.data);
-        // Seleccionar el primer organizador si existe
-        if (response.data && response.data.length > 0 && !this.selectedOrganizer()) {
-          this.selectedOrganizer.set(response.data[0].id);
+        // Si no hay organizador seleccionado, seleccionar el primero
+        const current = this.selectedOrganizer();
+        if (response.data && response.data.length > 0 && !current) {
+          const firstOrg = response.data[0].id;
+          this.selectedOrganizer.set(firstOrg);
+          this.organizerStateService.setSelectedOrganizer(firstOrg);
         }
       },
       error: (error) => {
@@ -101,13 +122,17 @@ export class AuthLayoutComponent implements OnInit {
   }
 
   onOrganizerChange(organizerId: string | null) {
+    const previousOrganizer = this.selectedOrganizer();
     this.selectedOrganizer.set(organizerId);
-    // Aquí puedes agregar lógica adicional cuando cambia el organizador
-    console.log('Organizador seleccionado:', organizerId);
+
+    if (previousOrganizer !== null && previousOrganizer !== organizerId) {
+      window.location.reload();
+    }
   }
 
   async logout() {
     this.auth.logout();
+    this.organizerStateService.clearSelectedOrganizer();
     await this.router.navigate(['/']);
   }
 }

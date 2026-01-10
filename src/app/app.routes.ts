@@ -3,6 +3,8 @@ import { CategoryListComponent } from './category/components/category-list/categ
 import { CategoryFormComponent } from './category/components/category-form/category-form.component';
 import { OrganizerListComponent } from './organizer/components/organizer-list/organizer-list';
 import { OrganizerFormComponent } from './organizer/components/organizer-form/organizer-form';
+import { ProductListComponent } from './product/components/product-list/product-list';
+import { ProductFormComponent } from './product/components/product-form/product-form';
 import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
@@ -12,6 +14,9 @@ export const routes: Routes = [
   { path: 'organizers', component: OrganizerListComponent, canActivate: [authGuard] },
   { path: 'organizers/new', component: OrganizerFormComponent, canActivate: [authGuard] },
   { path: 'organizers/edit/:id', component: OrganizerFormComponent, canActivate: [authGuard] },
+  { path: 'products', component: ProductListComponent, canActivate: [authGuard] },
+  { path: 'products/new', component: ProductFormComponent, canActivate: [authGuard] },
+  { path: 'products/edit/:id', component: ProductFormComponent, canActivate: [authGuard] },
   // add more protected child routes here
   { path: '**', redirectTo: '' }
 ];

@@ -1,19 +1,19 @@
-import { inject, Injectable } from '@angular/core';
+﻿import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Organizer, OrganizerRequest } from '../models';
+import { Product, ProductRequest } from '../models';
 import { ApiResponse, PaginatedResponse } from '../../models';
 
 @Injectable({
   providedIn: 'root'
 })
-export class OrganizerService {
+export class ProductService {
   private http = inject(HttpClient);
-  private readonly apiUrl = '/api/organizer';
+  private readonly apiUrl = '/api/product';
 
-  getAll(page: number = 1, pageSize: number = 10): Observable<PaginatedResponse<Organizer>> {
-    return this.http.get<PaginatedResponse<Organizer>>(
+  getAll(page: number = 1, pageSize: number = 10): Observable<PaginatedResponse<Product>> {
+    return this.http.get<PaginatedResponse<Product>>(
       `${this.apiUrl}/paged?page=${page}&pageSize=${pageSize}`
     ).pipe(
       map(response => response),
@@ -21,11 +21,11 @@ export class OrganizerService {
     );
   }
 
-  getById(id: string): Observable<Organizer> {
-    return this.http.get<ApiResponse<Organizer>>(`${this.apiUrl}/${id}`).pipe(
+  getById(id: string): Observable<Product> {
+    return this.http.get<ApiResponse<Product>>(`${this.apiUrl}/${id}`).pipe(
       map(response => {
         if (response.error) {
-          throw new Error(response.error.message || 'Error al obtener el organizador');
+          throw new Error(response.error.message || 'Error al obtener el producto');
         }
         return response.data;
       }),
@@ -33,11 +33,11 @@ export class OrganizerService {
     );
   }
 
-  create(request: OrganizerRequest): Observable<Organizer> {
-    return this.http.post<ApiResponse<Organizer>>(this.apiUrl, request).pipe(
+  create(request: ProductRequest): Observable<Product> {
+    return this.http.post<ApiResponse<Product>>(this.apiUrl, request).pipe(
       map(response => {
         if (response.error) {
-          throw new Error(response.error.message || 'Error al crear el organizador');
+          throw new Error(response.error.message || 'Error al crear el producto');
         }
         return response.data;
       }),
@@ -45,11 +45,11 @@ export class OrganizerService {
     );
   }
 
-  update(id: string, request: OrganizerRequest): Observable<Organizer> {
-    return this.http.put<ApiResponse<Organizer>>(`${this.apiUrl}/${id}`, request).pipe(
+  update(id: string, request: ProductRequest): Observable<Product> {
+    return this.http.put<ApiResponse<Product>>(`${this.apiUrl}/${id}`, request).pipe(
       map(response => {
         if (response.error) {
-          throw new Error(response.error.message || 'Error al actualizar el organizador');
+          throw new Error(response.error.message || 'Error al actualizar el producto');
         }
         return response.data;
       }),
@@ -61,7 +61,7 @@ export class OrganizerService {
     return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`).pipe(
       map(response => {
         if (response.error) {
-          throw new Error(response.error.message || 'Error al eliminar el organizador');
+          throw new Error(response.error.message || 'Error al eliminar el producto');
         }
         return response.data;
       }),
@@ -86,7 +86,7 @@ export class OrganizerService {
           errorMessage = 'Acceso denegado';
           break;
         case 404:
-          errorMessage = apiError.error?.detail || 'Organizador no encontrado';
+          errorMessage = apiError.error?.detail || 'Producto no encontrado';
           break;
         case 500:
           errorMessage = apiError.error?.detail || 'Error en el servidor. Intenta más tarde';
@@ -98,3 +98,4 @@ export class OrganizerService {
     return throwError(() => new Error(errorMessage));
   }
 }
+

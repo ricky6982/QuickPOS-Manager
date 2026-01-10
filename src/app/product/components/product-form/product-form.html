@@ -1,0 +1,100 @@
+﻿<div class="form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ titleText }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (loading()) {
+        <div class="loading-container">
+          <mat-spinner></mat-spinner>
+        </div>
+      } @else {
+        <form [formGroup]="form" (ngSubmit)="submit()">
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="name" placeholder="Ingrese el nombre del producto" />
+            @if (form.get('name')?.invalid && form.get('name')?.touched) {
+              <mat-error>
+                @if (form.get('name')?.errors?.['required']) {
+                  El nombre es requerido
+                }
+                @if (form.get('name')?.errors?.['minlength']) {
+                  El nombre debe tener al menos 2 caracteres
+                }
+                @if (form.get('name')?.errors?.['maxlength']) {
+                  El nombre no puede exceder 100 caracteres
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput formControlName="description" placeholder="Ingrese la descripción (opcional)" rows="3"></textarea>
+            @if (form.get('description')?.invalid && form.get('description')?.touched) {
+              <mat-error>
+                @if (form.get('description')?.errors?.['maxlength']) {
+                  La descripción no puede exceder 500 caracteres
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>SKU</mat-label>
+              <input matInput formControlName="sku" placeholder="Código SKU (opcional)" />
+              @if (form.get('sku')?.invalid && form.get('sku')?.touched) {
+                <mat-error>
+                  @if (form.get('sku')?.errors?.['maxlength']) {
+                    El SKU no puede exceder 50 caracteres
+                  }
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Código de Barras</mat-label>
+              <input matInput formControlName="barcode" placeholder="Código de barras (opcional)" />
+              @if (form.get('barcode')?.invalid && form.get('barcode')?.touched) {
+                <mat-error>
+                  @if (form.get('barcode')?.errors?.['maxlength']) {
+                    El código de barras no puede exceder 50 caracteres
+                  }
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Categoría</mat-label>
+            <mat-select formControlName="categoryId" placeholder="Seleccione una categoría (opcional)">
+              <mat-option [value]="null">-- Ninguna --</mat-option>
+              @for (category of categories(); track category.id) {
+                <mat-option [value]="category.id">{{ category.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="toggle-container">
+            <mat-slide-toggle formControlName="isActive" color="primary">
+              Producto activo
+            </mat-slide-toggle>
+          </div>
+
+          <div class="actions">
+            <button mat-button type="button" (click)="cancel()">
+              Cancelar
+            </button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="loading()">
+              {{ submitButtonText }}
+            </button>
+          </div>
+        </form>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>
+

@@ -2,8 +2,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Category, CategoryRequest, PaginatedResponse } from '../models';
-import { ApiResponse } from '../../models';
+import { Category, CategoryRequest } from '../models';
+import { ApiResponse, PaginatedResponse } from '../../models';
 
 @Injectable({
   providedIn: 'root'
