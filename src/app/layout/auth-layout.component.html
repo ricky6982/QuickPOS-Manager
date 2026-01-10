@@ -6,10 +6,56 @@
     </div>
 
     <div class="toolbar-right">
+      <!-- Selector de Organizadores -->
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="organizer-selector">
+        <mat-select
+          [value]="selectedOrganizer()"
+          (selectionChange)="onOrganizerChange($event.value)">
+
+          <!-- Opción en blanco para deseleccionar -->
+          <mat-option [value]="null">
+            <em>-- Ninguno --</em>
+          </mat-option>
+
+          <!-- Buscador (solo si hay más de 10 organizadores) -->
+          @if (showSearch()) {
+            <mat-option>
+              <ngx-mat-select-search
+                [formControl]="organizerSearchCtrl"
+                placeholderLabel="Buscar ..."
+                noEntriesFoundLabel="No se encontraron organizadores">
+              </ngx-mat-select-search>
+            </mat-option>
+          }
+
+          <!-- Lista de organizadores filtrados -->
+          @for (organizer of filteredOrganizers(); track organizer.id) {
+            <mat-option [value]="organizer.id">
+              {{ organizer.name }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Menú de Usuario -->
       @if (username()) {
-        <span class="username">{{ username() }}</span>
+        <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+          <mat-icon>account_circle</mat-icon>
+          <span>{{ username() }}</span>
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item disabled>
+            <mat-icon>person</mat-icon>
+            <span>{{ username() }}</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Cerrar sesión</span>
+          </button>
+        </mat-menu>
       }
-      <button mat-button (click)="logout()">Cerrar sesión</button>
     </div>
   </mat-toolbar>
 
