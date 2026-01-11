@@ -9,8 +9,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { OrganizerStateService } from '../../../organizer/services/organizer-state.service';
 import { CategoryService } from '../../services/category.service';
-import { CategoryRequest } from '../../models';
+import { CategoryRequest, Category } from '../../models';
+
 @Component({
   selector: 'app-category-form',
   standalone: true,
@@ -23,7 +26,8 @@ import { CategoryRequest } from '../../models';
     MatSlideToggleModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatSelectModule
   ],
   templateUrl: './category-form.component.html',
   styleUrls: ['./category-form.component.css']
@@ -31,18 +35,24 @@ import { CategoryRequest } from '../../models';
 export class CategoryFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private categoryService = inject(CategoryService);
+  private organizerStateService = inject(OrganizerStateService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private snackBar = inject(MatSnackBar);
   protected loading = signal(false);
   protected mode = signal<'create' | 'edit'>('create');
   protected categoryId = signal<string | null>(null);
+  protected activeCategories = signal<Category[]>([]);
+
   form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
     description: ['', []],
+    parentId: [null as string | null],
     isActive: [true]
   });
   ngOnInit() {
+    this.loadActiveCategories();
+
     this.route.params.subscribe(params => {
       const id = params['id'];
       if (id) {
@@ -54,6 +64,27 @@ export class CategoryFormComponent implements OnInit {
       }
     });
   }
+
+  loadActiveCategories() {
+    this.categoryService.getActiveCategories().subscribe({
+      next: (categories) => {
+        this.activeCategories.set(categories);
+      },
+      error: (error) => {
+        this.snackBar.open(error.message || 'Error al cargar las categorías', 'Cerrar', {
+          duration: 3000
+        });
+      }
+    });
+  }
+
+  get filteredCategories(): Category[] {
+    // Filter out the current category being edited
+    return this.activeCategories().filter(cat =>
+      !this.categoryId() || cat.id.toString() !== this.categoryId()
+    );
+  }
+
   loadCategory(id: string) {
     this.loading.set(true);
     this.categoryService.getById(id).subscribe({
@@ -61,6 +92,7 @@ export class CategoryFormComponent implements OnInit {
         this.form.patchValue({
           name: category.name,
           description: category.description,
+          parentId: (category as any).parentId || null,
           isActive: category.isActive
         });
         this.loading.set(false);
@@ -83,8 +115,10 @@ export class CategoryFormComponent implements OnInit {
     const formValue = this.form.value as CategoryRequest;
     const request: CategoryRequest = {
       id: this.categoryId(),
+      organizerId: this.organizerStateService.getSelectedOrganizer(),
       name: formValue.name,
       description: formValue.description,
+      parentId: formValue.parentId,
       isActive: formValue.isActive
     };
     const operation = this.mode() === 'create'

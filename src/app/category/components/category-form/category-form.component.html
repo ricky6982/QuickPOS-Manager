@@ -40,6 +40,18 @@
             </textarea>
           </mat-form-field>
 
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Categoría Padre</mat-label>
+            <mat-select formControlName="parentId" placeholder="Seleccione una categoría padre (opcional)">
+              <mat-option [value]="null">-- Sin categoría padre --</mat-option>
+              @for (category of filteredCategories; track category.id) {
+                <mat-option [value]="category.id.toString()">
+                  {{ category.name }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
           <div class="toggle-container">
             <mat-slide-toggle formControlName="isActive" color="primary">
               Categoría activa

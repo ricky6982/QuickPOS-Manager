@@ -40,7 +40,7 @@ export class CategoryListComponent implements OnInit {
   protected currentPage = signal(1);
   protected pageSize = signal(10);
   protected totalItems = signal(0);
-  displayedColumns: string[] = ['name', 'description', 'isActive', 'actions'];
+  displayedColumns: string[] = ['name', 'description', 'parentName', 'isActive', 'actions'];
   ngOnInit() {
     this.loadCategories();
   }
@@ -75,7 +75,6 @@ export class CategoryListComponent implements OnInit {
     this.router.navigate(['/categories/new']);
   }
   editCategory(id: string) {
-    debugger;
     this.router.navigate(['/categories/edit', id]);
   }
   deleteCategory(category: Category) {

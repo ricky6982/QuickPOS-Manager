@@ -99,6 +99,22 @@ export class CategoryService {
   }
 
   /**
+   * Obtener todas las categorías activas
+   * @returns Observable con el arreglo de categorías activas
+   */
+  getActiveCategories(): Observable<Category[]> {
+    return this.http.get<ApiResponse<Category[]>>(`${this.apiUrl}/active`).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error.message || 'Error al obtener las categorías activas');
+        }
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  /**
    * Manejo de errores HTTP
    * @param error - Error HTTP
    * @returns Observable con el error
