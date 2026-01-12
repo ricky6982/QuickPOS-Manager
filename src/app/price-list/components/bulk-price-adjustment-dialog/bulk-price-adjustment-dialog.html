@@ -1,0 +1,100 @@
+﻿<div class="dialog-container">
+  <h2 mat-dialog-title>
+    Ajuste Masivo de Precios
+    <button mat-icon-button class="close-button" (click)="cancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </h2>
+
+  <mat-dialog-content>
+    <!-- Alcance del ajuste -->
+    <div class="section">
+      <h3 class="section-title">Alcance del ajuste</h3>
+      <div class="scope-buttons">
+        <button
+          mat-stroked-button
+          [class.active]="scope === 'all'"
+          (click)="setScope('all')"
+          class="scope-button">
+          Todos ({{ data.totalProducts }})
+        </button>
+        <button
+          mat-stroked-button
+          [class.active]="scope === 'selected'"
+          (click)="setScope('selected')"
+          [disabled]="data.selectedProducts === 0"
+          class="scope-button">
+          Seleccionados ({{ data.selectedProducts }})
+        </button>
+      </div>
+    </div>
+
+    <!-- Tipo de Operación y Valor -->
+    <div class="section">
+      <div class="operation-row">
+        <div class="operation-select">
+          <label class="input-label">Tipo de Operación</label>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select [(ngModel)]="operationType">
+              @for (option of operationOptions; track option.value) {
+                <mat-option [value]="option.value">
+                  {{ option.label }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="value-input">
+          <label class="input-label">Valor</label>
+          <div class="value-group">
+            <mat-form-field appearance="outline" class="value-field">
+              <input
+                matInput
+                type="number"
+                step="0.01"
+                min="0"
+                [(ngModel)]="value"
+                placeholder="0.00" />
+            </mat-form-field>
+            <div class="value-type-buttons">
+              <button
+                mat-flat-button
+                [class.active]="valueType === 'percentage'"
+                (click)="setValueType('percentage')"
+                class="value-type-button">
+                %
+              </button>
+              <button
+                mat-stroked-button
+                [class.active]="valueType === 'amount'"
+                (click)="setValueType('amount')"
+                class="value-type-button">
+                $
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen del impacto -->
+    <div class="impact-summary">
+      <mat-icon class="info-icon">info</mat-icon>
+      <div class="impact-content">
+        <strong>Resumen del impacto</strong>
+        <p>{{ impactMessage }}</p>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button (click)="cancel()">
+      Cancelar
+    </button>
+    <button mat-raised-button color="primary" (click)="confirm()" [disabled]="!value || value <= 0">
+      Confirmar
+    </button>
+  </mat-dialog-actions>
+</div>
+

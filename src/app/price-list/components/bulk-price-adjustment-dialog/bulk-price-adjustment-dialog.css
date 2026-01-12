@@ -1,0 +1,194 @@
+﻿.dialog-container {
+  padding: 0;
+  max-width: 600px;
+}
+
+h2[mat-dialog-title] {
+  margin: 0;
+  padding: 24px 24px 8px;
+  font-size: 24px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-button {
+  margin-right: -12px;
+}
+
+.dialog-subtitle {
+  margin: 0;
+  padding: 0 24px 16px;
+  color: #666;
+  font-size: 14px;
+}
+
+mat-dialog-content {
+  padding: 0 24px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 12px 0;
+  color: #333;
+}
+
+.input-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #666;
+}
+
+/* Scope Buttons */
+.scope-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.scope-button {
+  flex: 1;
+  height: 48px;
+  font-size: 14px;
+  border: 2px solid #e0e0e0;
+  background-color: white;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+.scope-button.active {
+  border-color: #1976d2;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.scope-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Operation Row */
+.operation-row {
+  display: flex;
+  gap: 16px;
+}
+
+.operation-select {
+  flex: 1;
+}
+
+.value-input {
+  flex: 1;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Value Group */
+.value-group {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.value-field {
+  flex: 1;
+}
+
+.value-type-buttons {
+  display: flex;
+  gap: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 56px;
+}
+
+.value-type-button {
+  min-width: 48px;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  border-left: 1px solid #e0e0e0;
+  background-color: white;
+  color: #666;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.value-type-button:first-child {
+  border-left: none;
+}
+
+.value-type-button.active {
+  background-color: #1976d2;
+  color: white;
+}
+
+/* Impact Summary */
+.impact-summary {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background-color: #e3f2fd;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.info-icon {
+  color: #1976d2;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.impact-content {
+  flex: 1;
+}
+
+.impact-content strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #1976d2;
+  font-size: 14px;
+}
+
+.impact-content p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Dialog Actions */
+.dialog-actions {
+  padding: 16px 24px;
+  margin: 0;
+  gap: 12px;
+}
+
+.dialog-actions button {
+  min-width: 100px;
+}
+
+/* Material Form Field Customization */
+::ng-deep .value-field .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+::ng-deep .operation-select .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+

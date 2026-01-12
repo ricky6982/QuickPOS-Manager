@@ -20,6 +20,7 @@ import { PriceListService } from '../../services/price-list.service';
 import { PriceListRequest, PriceListScope, PriceListStatus, PriceListItemForm } from '../../models';
 import { OrganizerStateService } from '../../../organizer/services/organizer-state.service';
 import { ProductSelectionDialogComponent, ProductSelectionData } from '../product-selection-dialog/product-selection-dialog';
+import { BulkPriceAdjustmentDialogComponent, BulkPriceAdjustmentData, BulkPriceAdjustmentResult } from '../bulk-price-adjustment-dialog/bulk-price-adjustment-dialog';
 
 @Component({
   selector: 'app-price-list-form',
@@ -334,6 +335,75 @@ export class PriceListFormComponent implements OnInit {
 
   get displayedColumns(): string[] {
     return this.mode() === 'create' ? this.displayedColumnsCreate : this.displayedColumnsEdit;
+  }
+
+  get selectedProductCount(): number {
+    return this.productItems().filter(item => item.isSelected).length;
+  }
+
+  openBulkPriceAdjustmentDialog() {
+    const selectedCount = this.selectedProductCount;
+
+    const dialogRef = this.dialog.open(BulkPriceAdjustmentDialogComponent, {
+      width: '600px',
+      disableClose: false,
+      data: {
+        totalProducts: this.productItems().length,
+        selectedProducts: selectedCount
+      } as BulkPriceAdjustmentData
+    });
+
+    dialogRef.afterClosed().subscribe((result: BulkPriceAdjustmentResult) => {
+      if (result) {
+        this.applyBulkPriceAdjustment(result);
+      }
+    });
+  }
+
+  applyBulkPriceAdjustment(adjustment: BulkPriceAdjustmentResult) {
+    const items = [...this.productItems()];
+    let updatedCount = 0;
+
+    const itemsToUpdate = adjustment.scope === 'all'
+      ? items
+      : items.filter(item => item.isSelected);
+
+    itemsToUpdate.forEach(item => {
+      let newPrice = item.price;
+
+      if (adjustment.valueType === 'percentage') {
+        // Ajuste por porcentaje
+        if (adjustment.operationType === 'increment') {
+          newPrice = item.price * (1 + adjustment.value / 100);
+        } else {
+          newPrice = item.price * (1 - adjustment.value / 100);
+        }
+      } else {
+        // Ajuste por monto fijo
+        if (adjustment.operationType === 'increment') {
+          newPrice = item.price + adjustment.value;
+        } else {
+          newPrice = item.price - adjustment.value;
+        }
+      }
+
+      // Asegurar que el precio no sea negativo
+      newPrice = Math.max(0, newPrice);
+
+      // Redondear a 2 decimales
+      newPrice = Math.round(newPrice * 100) / 100;
+
+      item.price = newPrice;
+      updatedCount++;
+    });
+
+    this.productItems.set(items);
+
+    this.snackBar.open(
+      `Precios actualizados para ${updatedCount} producto(s)`,
+      'Cerrar',
+      { duration: 3000 }
+    );
   }
 }
 

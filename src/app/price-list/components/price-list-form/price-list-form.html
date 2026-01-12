@@ -111,10 +111,21 @@
                   <mat-icon [matBadge]="productCount" matBadgeColor="accent" matBadgeSize="small">shopping_cart</mat-icon>
                 }
               </h3>
-              <button mat-raised-button color="accent" type="button" (click)="openProductDialog()">
-                <mat-icon>add</mat-icon>
-                Agregar Productos
-              </button>
+              <div class="header-actions">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="button"
+                  (click)="openBulkPriceAdjustmentDialog()"
+                  [disabled]="productCount === 0">
+                  <mat-icon>tune</mat-icon>
+                  Ajuste Masivo
+                </button>
+                <button mat-raised-button color="accent" type="button" (click)="openProductDialog()">
+                  <mat-icon>add</mat-icon>
+                  Agregar Productos
+                </button>
+              </div>
             </div>
 
             @if (productCount === 0) {
