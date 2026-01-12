@@ -1,0 +1,106 @@
+<div class="price-list-list-container">
+  <div class="header">
+    <h2>Listas de Precios</h2>
+    <button mat-raised-button color="primary" (click)="create()">
+      <mat-icon>add</mat-icon>
+      Crear Lista de Precios
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table mat-table [dataSource]="priceLists()" class="price-lists-table">
+
+        <!-- Columna Nombre -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let priceList">{{ priceList.name }}</td>
+        </ng-container>
+
+        <!-- Columna Alcance -->
+        <ng-container matColumnDef="scope">
+          <th mat-header-cell *matHeaderCellDef>Alcance</th>
+          <td mat-cell *matCellDef="let priceList">{{ getScopeName(priceList.scope) }}</td>
+        </ng-container>
+
+        <!-- Columna Estado -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let priceList">
+            <mat-chip [class]="getStatusClass(priceList.status)">
+              {{ getStatusLabel(priceList.status) }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Columna Prioridad -->
+        <ng-container matColumnDef="priority">
+          <th mat-header-cell *matHeaderCellDef>Prioridad</th>
+          <td mat-cell *matCellDef="let priceList">{{ priceList.priority }}</td>
+        </ng-container>
+
+        <!-- Columna Válido Desde -->
+        <ng-container matColumnDef="validFrom">
+          <th mat-header-cell *matHeaderCellDef>Válido Desde</th>
+          <td mat-cell *matCellDef="let priceList">
+            {{ priceList.validFrom ? (priceList.validFrom | date:'dd/MM/yyyy') : '-' }}
+          </td>
+        </ng-container>
+
+        <!-- Columna Válido Hasta -->
+        <ng-container matColumnDef="validUntil">
+          <th mat-header-cell *matHeaderCellDef>Válido Hasta</th>
+          <td mat-cell *matCellDef="let priceList">
+            {{ priceList.validUntil ? (priceList.validUntil | date:'dd/MM/yyyy') : '-' }}
+          </td>
+        </ng-container>
+
+        <!-- Columna Acciones -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let priceList">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="edit(priceList.id)"
+              aria-label="Editar lista de precios">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="delete(priceList)"
+              aria-label="Eliminar lista de precios">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <!-- Fila cuando no hay datos -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+            No hay listas de precios disponibles
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    @if (totalItems() > 0) {
+      <app-pagination
+        [totalItems]="totalItems()"
+        [pageSize]="pageSize()"
+        [currentPage]="currentPage()"
+        (pageChange)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)">
+      </app-pagination>
+    }
+  }
+</div>
+

@@ -1,9 +1,9 @@
-﻿export interface PriceListItem {
-  id: number;
-  priceListId: number;
+﻿export interface PriceListItemForm {
   productId: string;
   productName: string;
+  currentPrice?: number;
   price: number;
   isAvailable: boolean;
+  isSelected: boolean;
 }
 

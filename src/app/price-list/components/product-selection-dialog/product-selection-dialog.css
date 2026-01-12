@@ -1,0 +1,68 @@
+﻿.dialog-container {
+  min-width: 800px;
+  max-width: 900px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.search-container {
+  margin-bottom: 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.table-container {
+  max-height: 500px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.products-table {
+  width: 100%;
+}
+
+.price-input {
+  width: 120px;
+  margin: 0;
+}
+
+.price-input ::ng-deep .mat-mdc-form-field-infix {
+  padding: 8px 0;
+  min-height: auto;
+}
+
+.not-selected {
+  color: #999;
+}
+
+.selected-info {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #e3f2fd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+}
+
+mat-dialog-content {
+  padding: 20px 24px;
+  min-height: 400px;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+}
+

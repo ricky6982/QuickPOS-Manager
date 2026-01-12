@@ -1,19 +1,19 @@
-﻿import { inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Product, ProductRequest } from '../models';
+import { PriceList, PriceListRequest } from '../models';
 import { ApiResponse, PaginatedResponse } from '../../models';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProductService {
+export class PriceListService {
   private http = inject(HttpClient);
-  private readonly apiUrl = '/api/product';
+  private readonly apiUrl = '/api/pricelist';
 
-  getAll(page: number = 1, pageSize: number = 10): Observable<PaginatedResponse<Product>> {
-    return this.http.get<PaginatedResponse<Product>>(
+  getAll(page: number = 1, pageSize: number = 10): Observable<PaginatedResponse<PriceList>> {
+    return this.http.get<PaginatedResponse<PriceList>>(
       `${this.apiUrl}/paged?page=${page}&pageSize=${pageSize}`
     ).pipe(
       map(response => response),
@@ -21,11 +21,11 @@ export class ProductService {
     );
   }
 
-  getActive(): Observable<Product[]> {
-    return this.http.get<ApiResponse<Product[]>>(`${this.apiUrl}/active`).pipe(
+  getById(id: number): Observable<PriceList> {
+    return this.http.get<ApiResponse<PriceList>>(`${this.apiUrl}/${id}`).pipe(
       map(response => {
         if (response.error) {
-          throw new Error(response.error.message || 'Error al obtener productos activos');
+          throw new Error(response.error.message || 'Error al obtener la lista de precios');
         }
         return response.data;
       }),
@@ -33,11 +33,11 @@ export class ProductService {
     );
   }
 
-  getById(id: string): Observable<Product> {
-    return this.http.get<ApiResponse<Product>>(`${this.apiUrl}/${id}`).pipe(
+  create(request: PriceListRequest): Observable<PriceList> {
+    return this.http.post<ApiResponse<PriceList>>(this.apiUrl, request).pipe(
       map(response => {
         if (response.error) {
-          throw new Error(response.error.message || 'Error al obtener el producto');
+          throw new Error(response.error.message || 'Error al crear la lista de precios');
         }
         return response.data;
       }),
@@ -45,11 +45,11 @@ export class ProductService {
     );
   }
 
-  create(request: ProductRequest): Observable<Product> {
-    return this.http.post<ApiResponse<Product>>(this.apiUrl, request).pipe(
+  update(id: number, request: PriceListRequest): Observable<PriceList> {
+    return this.http.put<ApiResponse<PriceList>>(`${this.apiUrl}/${id}`, request).pipe(
       map(response => {
         if (response.error) {
-          throw new Error(response.error.message || 'Error al crear el producto');
+          throw new Error(response.error.message || 'Error al actualizar la lista de precios');
         }
         return response.data;
       }),
@@ -57,23 +57,11 @@ export class ProductService {
     );
   }
 
-  update(id: string, request: ProductRequest): Observable<Product> {
-    return this.http.put<ApiResponse<Product>>(`${this.apiUrl}/${id}`, request).pipe(
-      map(response => {
-        if (response.error) {
-          throw new Error(response.error.message || 'Error al actualizar el producto');
-        }
-        return response.data;
-      }),
-      catchError(this.handleError)
-    );
-  }
-
-  delete(id: string): Observable<void> {
+  delete(id: number): Observable<void> {
     return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`).pipe(
       map(response => {
         if (response.error) {
-          throw new Error(response.error.message || 'Error al eliminar el producto');
+          throw new Error(response.error.message || 'Error al eliminar la lista de precios');
         }
         return response.data;
       }),
@@ -98,7 +86,7 @@ export class ProductService {
           errorMessage = 'Acceso denegado';
           break;
         case 404:
-          errorMessage = apiError.error?.detail || 'Producto no encontrado';
+          errorMessage = apiError.error?.detail || 'Lista de precios no encontrada';
           break;
         case 500:
           errorMessage = apiError.error?.detail || 'Error en el servidor. Intenta más tarde';
