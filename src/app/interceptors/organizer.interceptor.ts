@@ -1,6 +1,6 @@
 ﻿import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { OrganizerStateService } from '../services/organizer-state.service';
+import { OrganizerStateService } from '../organizer/services/organizer-state.service';
 
 /**
  * Interceptor que agrega automáticamente el header X-Organizer-Id
