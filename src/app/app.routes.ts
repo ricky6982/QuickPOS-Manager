@@ -7,9 +7,13 @@ import { ProductListComponent } from './product/components/product-list/product-
 import { ProductFormComponent } from './product/components/product-form/product-form';
 import { PriceListListComponent } from './price-list/components/price-list-list/price-list-list';
 import { PriceListFormComponent } from './price-list/components/price-list-form/price-list-form';
+import { UserListComponent } from './user/components/user-list/user-list';
+import { UserFormComponent } from './user/components/user-form/user-form';
 import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
+  { path: 'users', component: UserListComponent, canActivate: [authGuard] },
+  { path: 'users/edit/:id', component: UserFormComponent, canActivate: [authGuard] },
   { path: 'categories', component: CategoryListComponent, canActivate: [authGuard] },
   { path: 'categories/new', component: CategoryFormComponent, canActivate: [authGuard] },
   { path: 'categories/edit/:id', component: CategoryFormComponent, canActivate: [authGuard] },

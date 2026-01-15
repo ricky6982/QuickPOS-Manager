@@ -1,0 +1,98 @@
+﻿h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+mat-dialog-content {
+  min-height: 300px;
+  max-height: 600px;
+  overflow: auto;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #999;
+}
+
+.no-data-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+}
+
+.organizations-table {
+  width: 100%;
+  background: white;
+}
+
+.organizations-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.role-chip {
+  background-color: #2196f3 !important;
+  color: white !important;
+  font-size: 12px;
+  min-height: 24px;
+  padding: 4px 8px;
+}
+
+.permissions-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.permission-chip {
+  background-color: #9c27b0 !important;
+  color: white !important;
+  font-size: 11px;
+  min-height: 20px;
+  padding: 2px 6px;
+}
+
+.no-permissions {
+  color: #999;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.active-chip {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.inactive-chip {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+mat-chip {
+  font-size: 12px;
+  min-height: 24px;
+  padding: 4px 8px;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  margin: 0;
+}
+

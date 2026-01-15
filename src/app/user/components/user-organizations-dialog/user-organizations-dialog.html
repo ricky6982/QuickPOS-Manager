@@ -1,0 +1,70 @@
+﻿<h2 mat-dialog-title>
+  <mat-icon>business</mat-icon>
+  Organizaciones de {{ data.user.username }}
+</h2>
+
+<mat-dialog-content>
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    @if (organizations().length === 0) {
+      <div class="no-data">
+        <mat-icon class="no-data-icon">info</mat-icon>
+        <p>Este usuario no está vinculado a ninguna organización</p>
+      </div>
+    } @else {
+      <table mat-table [dataSource]="organizations()" class="organizations-table">
+
+        <!-- Columna Organización -->
+        <ng-container matColumnDef="organizationName">
+          <th mat-header-cell *matHeaderCellDef>Organización</th>
+          <td mat-cell *matCellDef="let org">{{ org.organizationName }}</td>
+        </ng-container>
+
+        <!-- Columna Rol -->
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef>Rol</th>
+          <td mat-cell *matCellDef="let org">
+            <mat-chip class="role-chip">{{ org.role }}</mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Columna Permisos -->
+        <ng-container matColumnDef="permissions">
+          <th mat-header-cell *matHeaderCellDef>Permisos</th>
+          <td mat-cell *matCellDef="let org">
+            <div class="permissions-container">
+              @if (org.permissions && org.permissions.length > 0) {
+                @for (permission of org.permissions; track permission) {
+                  <mat-chip class="permission-chip">{{ permission }}</mat-chip>
+                }
+              } @else {
+                <span class="no-permissions">Sin permisos específicos</span>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Columna Estado -->
+        <ng-container matColumnDef="isActive">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let org">
+            <mat-chip [class.active-chip]="org.isActive" [class.inactive-chip]="!org.isActive">
+              {{ org.isActive ? 'Activo' : 'Inactivo' }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button (click)="close()">Cerrar</button>
+</mat-dialog-actions>
+
