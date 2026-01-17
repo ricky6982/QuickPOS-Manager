@@ -1,52 +1,44 @@
-﻿<div class="min-h-screen" style="display: flex; justify-content: center; align-items: center; height: 100%;background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px;">
-  <mat-card style="max-width: 800px; width: 100%;">
+﻿<div class="min-h-screen">
+  <mat-card class="card-container">
     <mat-card-header>
-      <div style="text-align: center; width: 100%; margin-bottom: 24px;">
-        <h1 style="font-size: 28px; font-weight: 500; margin: 0 0 8px 0; color: #333;">
+      <div class="header-content">
+        <h1 class="header-title">
           Selecciona una Organización
         </h1>
-        <p style="color: #666; margin: 0;">Elige la organización con la que deseas trabajar</p>
+        <p class="header-subtitle">Elige la organización con la que deseas trabajar</p>
       </div>
     </mat-card-header>
 
     <mat-card-content>
       @if (error()) {
-        <div style="background: #fee; border: 1px solid #fcc; padding: 12px; border-radius: 4px; margin-bottom: 16px; color: #c33;">
-          <mat-icon style="vertical-align: middle; margin-right: 8px;">error</mat-icon>
+        <div class="error-container">
+          <mat-icon class="error-icon">error</mat-icon>
           {{ error() }}
         </div>
       }
 
-      <div style="display: grid; gap: 12px;">
+      <div class="organizations-grid">
         @for (org of organizations(); track org.id) {
           <div
             class="org-card"
             [class.selected]="selectedOrg()?.id === org.id"
             [class.disabled]="loading()"
-            (click)="!loading() && selectOrganization(org)"
-            style="
-              border: 2px solid #e0e0e0;
-              border-radius: 8px;
-              padding: 16px;
-              cursor: pointer;
-              transition: all 0.3s ease;
-              background: white;
-            ">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <div style="flex: 1;">
-                <div style="font-size: 20px; font-weight: 500; margin-bottom: 8px; color: #333;">
+            (click)="!loading() && selectOrganization(org)">
+            <div class="org-card-content">
+              <div class="org-info">
+                <div class="org-name">
                   {{ org.name }}
                 </div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <div class="org-roles">
                   @for (role of org.roles; track role) {
-                    <mat-chip-option style="font-size: 12px;">{{ role }}</mat-chip-option>
+                    <mat-chip-option class="role-chip">{{ role }}</mat-chip-option>
                   }
                 </div>
               </div>
               @if (loading() && selectedOrg()?.id === org.id) {
                 <mat-spinner diameter="24"></mat-spinner>
               } @else {
-                <mat-icon style="color: #999; font-size: 32px; width: 32px; height: 32px;">arrow_forward</mat-icon>
+                <mat-icon class="org-arrow">arrow_forward</mat-icon>
               }
             </div>
           </div>
@@ -54,14 +46,14 @@
       </div>
 
       @if (organizations().length === 0) {
-        <div style="text-align: center; padding: 40px; color: #999;">
-          <mat-icon style="font-size: 64px; width: 64px; height: 64px; margin-bottom: 16px;">business</mat-icon>
+        <div class="empty-state">
+          <mat-icon class="empty-icon">business</mat-icon>
           <p>No tienes organizaciones asignadas</p>
         </div>
       }
     </mat-card-content>
 
-    <mat-card-actions style="display: flex; justify-content: center; padding-top: 16px;">
+    <mat-card-actions class="card-actions">
       <button mat-stroked-button color="accent" (click)="logout()" [disabled]="loading()">
         <mat-icon>logout</mat-icon>
         Cerrar Sesión
@@ -70,20 +62,3 @@
   </mat-card>
 </div>
 
-<style>
-  .org-card:hover:not(.disabled) {
-    border-color: #667eea !important;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-    transform: translateY(-2px);
-  }
-
-  .org-card.selected {
-    border-color: #667eea !important;
-    background: #f8f9ff !important;
-  }
-
-  .org-card.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-</style>

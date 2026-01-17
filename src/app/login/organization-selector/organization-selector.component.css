@@ -1,1 +1,131 @@
 ﻿/* Organization Selector Component Styles */
+
+.min-h-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.card-container {
+  max-width: 800px;
+  width: 100%;
+}
+
+.header-content {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 500;
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.header-subtitle {
+  color: #666;
+  margin: 0;
+}
+
+.error-container {
+  background: #fee;
+  border: 1px solid #fcc;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  color: #c33;
+}
+
+.error-icon {
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.organizations-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.org-card {
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.org-card:hover:not(.disabled) {
+  border-color: #667eea !important;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+}
+
+.org-card.selected {
+  border-color: #667eea !important;
+  background: #f8f9ff !important;
+}
+
+.org-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.org-card-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.org-info {
+  flex: 1;
+}
+
+.org-name {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.org-roles {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.role-chip {
+  font-size: 12px;
+}
+
+.org-arrow {
+  color: #999;
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+}
+
