@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../auth.service';
+import { LoginRequest } from '../models';
 
 @Component({
   selector: 'app-login',
@@ -28,7 +29,6 @@ export class LoginComponent {
   busy = signal(false);
   error = signal<string | null>(null);
 
-
   async submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -38,21 +38,32 @@ export class LoginComponent {
     this.busy.set(true);
     this.error.set(null);
 
-    const { username, password } = this.form.value as { username: string; password: string };
-    try {
-      const ok = await this.auth.login(username!, password!);
-      if (ok) {
-        await this.router.navigateByUrl('/');
-      } else {
-        this.error.set('Credenciales inválidas');
+    const credentials: LoginRequest = this.form.value as LoginRequest;
+
+    this.auth.login(credentials).subscribe({
+      next: (response) => {
+        if (response.data) {
+          if (response.data.user.isGlobalAdmin) {
+            this.router.navigate(['/organizers']);
+          } else if (response.data.organizations) {
+            this.router.navigate(['/select-organization'], {
+              state: { organizations: response.data.organizations }
+            });
+          } else {
+            console.warn('No es admin y no tiene organizaciones');
+            this.error.set('No tiene organizaciones asignadas');
+          }
+        } else if (response.error) {
+          this.error.set(response.error?.message || 'Error en el login');
+        }
+        this.busy.set(false);
+      },
+      error: (error) => {
+        console.error('Error en login:', error);
+        this.busy.set(false);
+        this.error.set(error?.error?.message || error?.message || 'Error de conexión');
       }
-    } catch (e: any) {
-      // Extraer el mensaje de error del objeto Error
-      const errorMessage = e?.message || 'Error de conexión';
-      this.error.set(errorMessage);
-    } finally {
-      this.busy.set(false);
-    }
+    });
   }
 }
 

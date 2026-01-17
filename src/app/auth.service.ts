@@ -1,83 +1,158 @@
 ﻿import { Injectable, signal, inject } from '@angular/core';
-import { LoginService } from './login/services/login.service';
-import { lastValueFrom } from 'rxjs';
-import { LoginResponse } from './login/models/login.response';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+import {
+  LoginRequest,
+  LoginResponse,
+  SelectOrganizationRequest,
+  SelectOrganizationResponse,
+  SwitchOrganizationRequest,
+  AuthenticatedUser,
+  UserOrganizationOption
+} from './models/auth.models';
+import { ApiResponse } from './models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private loginService = inject(LoginService);
+  private http = inject(HttpClient);
+  private readonly API_URL = '/api/auth';
+  private readonly TOKEN_KEY = 'auth_token';
+  private readonly USER_KEY = 'auth_user';
+  private readonly ORGS_KEY = 'pending_organizations';
 
-  private _token = signal<string | null>(null);
-  private _username = signal<string>('');
-  private _initialized = false;
+  private currentUserSubject = signal<AuthenticatedUser | null>(this.getStoredUser());
 
   constructor() {
-    // Inicializar tokens desde localStorage al crear el servicio
+    // Inicializar desde localStorage
     this.initializeFromStorage();
   }
 
   private initializeFromStorage(): void {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      this._token.set(token);
-      const username = localStorage.getItem('username') || '';
-      this._username.set(username);
-    }
-    this._initialized = true;
-  }
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    const userStr = localStorage.getItem(this.USER_KEY);
 
-  async login(username: string, password: string): Promise<boolean> {
-    try {
-      // Hacer petición POST a /api/auth/login
-      const response: LoginResponse = await lastValueFrom(
-        this.loginService.login(username, password)
-      );
-
-      // Verificar si el login fue exitoso
-      if (response.token || response.accessToken) {
-        const token = response.token || response.accessToken;
-        this._token.set(token!);
-
-        // Guardar el username (del response o usar el ingresado)
-        const user = response.user?.username || response.user?.name || username;
-        this._username.set(user);
-
-        // Opcional: guardar token en localStorage para persistencia
-        localStorage.setItem('auth_token', token!);
-        localStorage.setItem('username', user);
-
-        return true;
+    if (token && userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        this.currentUserSubject.set(user);
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        this.logout();
       }
-
-      return false;
-    } catch (error) {
-      console.error('Error en login:', error);
-      // Propagar el error para que el componente pueda mostrarlo
-      throw error;
     }
   }
 
-  logout() {
-    this._token.set(null);
-    this._username.set('');
+  // Paso 1: Login inicial
+  login(credentials: LoginRequest): Observable<ApiResponse<LoginResponse>> {
+    return this.http.post<ApiResponse<LoginResponse>>(`${this.API_URL}/login`, credentials)
+      .pipe(
+        tap(response => {
+          if (response.data) {
+            this.setToken(response.data.token);
+            this.setUser(response.data.user);
+            this.currentUserSubject.set(response.data.user);
+            if (response.data.organizations) {
+              localStorage.setItem(this.ORGS_KEY, JSON.stringify(response.data.organizations));
+            }
+          }
+        })
+      );
+  }
 
-    // Limpiar localStorage
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('username');
+  // Paso 2: Seleccionar organización
+  selectOrganization(request: SelectOrganizationRequest): Observable<ApiResponse<SelectOrganizationResponse>> {
+    return this.http.post<ApiResponse<SelectOrganizationResponse>>(
+      `${this.API_URL}/select-organization`,
+      request
+    ).pipe(
+      tap(response => {
+        debugger;
+        if (response.data) {
+          this.setToken(response.data.token);
+          this.setUser(response.data.user);
+          this.currentUserSubject.set(response.data.user);
+          // Limpiar organizaciones pendientes
+          localStorage.removeItem(this.ORGS_KEY);
+        }
+      })
+    );
+  }
+
+  // Cambiar de organización
+  switchOrganization(request: SwitchOrganizationRequest): Observable<ApiResponse<SelectOrganizationResponse>> {
+    return this.http.post<ApiResponse<SelectOrganizationResponse>>(
+      `${this.API_URL}/switch-organization`,
+      request
+    ).pipe(
+      tap(response => {
+        if (response.data) {
+          this.setToken(response.data.token);
+          this.setUser(response.data.user);
+          this.currentUserSubject.set(response.data.user);
+        }
+      })
+    );
+  }
+
+  // Obtener organizaciones pendientes de selección
+  getPendingOrganizations(): UserOrganizationOption[] | null {
+    const orgsStr = localStorage.getItem(this.ORGS_KEY);
+    return orgsStr ? JSON.parse(orgsStr) : null;
+  }
+
+  // Logout
+  logout(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.ORGS_KEY);
+    this.currentUserSubject.set(null);
+  }
+
+  // Helpers
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
   }
 
   isAuthenticated(): boolean {
-    // Solo leer el estado de los signals, sin modificarlos
-    // La inicialización se hace en el constructor
-    return this._token() !== null;
+    return !!this.getToken();
+  }
+
+  hasOrganization(): boolean {
+    const user = this.currentUserSubject();
+    return user?.isGlobalAdmin === true || !!user?.organizationId;
+  }
+
+  getCurrentUser(): AuthenticatedUser | null {
+    return this.currentUserSubject();
   }
 
   getUsername(): string {
-    return this._username();
+    return this.currentUserSubject()?.username || '';
   }
 
-  getToken(): string | null {
-    return this._token();
+  hasPermission(permission: string): boolean {
+    const user = this.currentUserSubject();
+    if (user?.isGlobalAdmin) return true;
+    return user?.permissions?.includes(permission) || false;
+  }
+
+  hasRole(role: string): boolean {
+    const user = this.currentUserSubject();
+    if (user?.isGlobalAdmin) return true;
+    return user?.roles?.includes(role) || false;
+  }
+
+  private setToken(token: string): void {
+    localStorage.setItem(this.TOKEN_KEY, token);
+  }
+
+  private setUser(user: AuthenticatedUser): void {
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+  }
+
+  private getStoredUser(): AuthenticatedUser | null {
+    const userStr = localStorage.getItem(this.USER_KEY);
+    return userStr ? JSON.parse(userStr) : null;
   }
 }
 

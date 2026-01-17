@@ -6,36 +6,47 @@
     </div>
 
     <div class="toolbar-right">
-      <!-- Selector de Organizadores -->
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="organizer-selector">
-        <mat-select
-          [value]="selectedOrganizer()"
-          (selectionChange)="onOrganizerChange($event.value)">
+      <!-- Badge de Admin -->
+      @if (isAdmin()) {
+        <mat-chip-option selected style="background-color: #f44336; color: white; margin-right: 16px;">
+          <mat-icon style="font-size: 16px; width: 16px; height: 16px; margin-right: 4px;">admin_panel_settings</mat-icon>
+          ADMIN
+        </mat-chip-option>
+      }
 
-          <!-- Opción en blanco para deseleccionar -->
-          <mat-option [value]="null">
-            <em>-- Ninguno --</em>
-          </mat-option>
+      <!-- Selector de Organizadores (solo para admin o modo legado) -->
+      @if (isAdmin() || organizers().length > 0) {
+        <mat-icon style="margin-right: 8px;">business</mat-icon>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="organizer-selector">
+          <mat-select
+            [value]="selectedOrganizer()"
+            (selectionChange)="onOrganizerChange($event.value)">
 
-          <!-- Buscador (solo si hay más de 10 organizadores) -->
-          @if (showSearch()) {
-            <mat-option>
-              <ngx-mat-select-search
-                [formControl]="organizerSearchCtrl"
-                placeholderLabel="Buscar ..."
-                noEntriesFoundLabel="No se encontraron organizadores">
-              </ngx-mat-select-search>
+            <!-- Opción en blanco para deseleccionar -->
+            <mat-option [value]="null">
+              <em>-- Ninguno --</em>
             </mat-option>
-          }
 
-          <!-- Lista de organizadores filtrados -->
-          @for (organizer of filteredOrganizers(); track organizer.id) {
-            <mat-option [value]="organizer.id">
-              {{ organizer.name }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+            <!-- Buscador (solo si hay más de 10 organizadores) -->
+            @if (showSearch()) {
+              <mat-option>
+                <ngx-mat-select-search
+                  [formControl]="organizerSearchCtrl"
+                  placeholderLabel="Buscar ..."
+                  noEntriesFoundLabel="No se encontraron organizadores">
+                </ngx-mat-select-search>
+              </mat-option>
+            }
+
+            <!-- Lista de organizadores filtrados -->
+            @for (organizer of filteredOrganizers(); track organizer.id) {
+              <mat-option [value]="organizer.id">
+                {{ organizer.name }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
 
       <!-- Menú de Usuario -->
       @if (username()) {
@@ -49,6 +60,12 @@
             <mat-icon>person</mat-icon>
             <span>{{ username() }}</span>
           </button>
+          @if (!isAdmin() && currentUser()?.roles) {
+            <button mat-menu-item disabled>
+              <mat-icon>badge</mat-icon>
+              <span>{{ currentUser()!.roles.join(', ') }}</span>
+            </button>
+          }
           <mat-divider></mat-divider>
           <button mat-menu-item (click)="logout()">
             <mat-icon>logout</mat-icon>
@@ -62,11 +79,17 @@
   <mat-sidenav-container class="sidenav-container">
     <mat-sidenav mode="side" opened class="sidenav">
       <mat-nav-list>
-        <a mat-list-item routerLink="/users" routerLinkActive="active">Usuarios</a>
-        <a mat-list-item routerLink="/organizers" routerLinkActive="active">Organizadores</a>
-        <a mat-list-item routerLink="/categories" routerLinkActive="active">Categorías</a>
-        <a mat-list-item routerLink="/products" routerLinkActive="active">Productos</a>
-        <a mat-list-item routerLink="/price-lists" routerLinkActive="active">Lista de Precios</a>
+        @if (isAdmin()) {
+          <a mat-list-item routerLink="/users" routerLinkActive="active">Usuarios</a>
+          <a mat-list-item routerLink="/organizers" routerLinkActive="active">Organizadores</a>
+        }
+
+        <!-- Opciones que requieren organizador seleccionado -->
+        @if (selectedOrganizer() || !isAdmin()) {
+          <a mat-list-item routerLink="/categories" routerLinkActive="active">Categorías</a>
+          <a mat-list-item routerLink="/products" routerLinkActive="active">Productos</a>
+          <a mat-list-item routerLink="/price-lists" routerLinkActive="active">Lista de Precios</a>
+        }
       </mat-nav-list>
     </mat-sidenav>
 
