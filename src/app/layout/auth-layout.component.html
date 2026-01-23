@@ -8,15 +8,15 @@
     <div class="toolbar-right">
       <!-- Badge de Admin -->
       @if (isAdmin()) {
-        <mat-chip-option selected style="background-color: #f44336; color: white; margin-right: 16px;">
-          <mat-icon style="font-size: 16px; width: 16px; height: 16px; margin-right: 4px;">admin_panel_settings</mat-icon>
+        <mat-chip-option selected class="admin-badge">
+          <mat-icon>admin_panel_settings</mat-icon>
           ADMIN
         </mat-chip-option>
       }
 
       <!-- Selector de Organizadores (solo para admin o modo legado) -->
       @if (isAdmin() || organizers().length > 0) {
-        <mat-icon style="margin-right: 8px;">business</mat-icon>
+        <mat-icon class="organizer-icon">business</mat-icon>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="organizer-selector">
           <mat-select
             [value]="selectedOrganizer()"
@@ -89,6 +89,7 @@
           <a mat-list-item routerLink="/categories" routerLinkActive="active">Categorías</a>
           <a mat-list-item routerLink="/products" routerLinkActive="active">Productos</a>
           <a mat-list-item routerLink="/price-lists" routerLinkActive="active">Lista de Precios</a>
+          <a mat-list-item routerLink="/staff" routerLinkActive="active">Personal</a>
         }
       </mat-nav-list>
     </mat-sidenav>

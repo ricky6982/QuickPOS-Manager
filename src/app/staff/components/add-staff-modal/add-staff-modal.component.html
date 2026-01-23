@@ -1,0 +1,81 @@
+﻿<div class="modal-header">
+  <h2 mat-dialog-title>{{ isEditMode() ? 'Editar Permisos del Staff' : 'Agregar Usuario al Staff' }}</h2>
+</div>
+
+<mat-dialog-content class="modal-body">
+  @if (!isEditMode()) {
+    <div class="search-section">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email o DNI</mat-label>
+        <input
+          matInput
+          [(ngModel)]="searchValue"
+          (keyup.enter)="searchUser()"
+          placeholder="Ingrese email o DNI"
+          [disabled]="isSearching()">
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="searchUser()"
+        [disabled]="isSearching() || !searchValue">
+        <mat-icon>search</mat-icon>
+        Buscar
+      </button>
+    </div>
+  }
+
+  @if (isSearching()) {
+    <div class="loading">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Buscando usuario...</p>
+    </div>
+  }
+
+  @if (userNotFound()) {
+    <div class="error-message">
+      <mat-icon>error_outline</mat-icon>
+      <p>El usuario no existe</p>
+    </div>
+  }
+
+  @if (staffUserFound() && !isSearching()) {
+    <div class="user-info">
+      <h3>Información del Usuario</h3>
+      <div class="info-field">
+        <strong>Apellido y Nombres:</strong> {{staffUserFound()!.lastName}}, {{staffUserFound()!.firstName}}
+      </div>
+      <div class="info-field">
+        <strong>Email:</strong> {{staffUserFound()!.email}}
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width roles-field">
+        <mat-label>Roles</mat-label>
+        <mat-select [(ngModel)]="selectedRoles" multiple>
+          @for (role of availableRoles(); track role.id) {
+            <mat-option [value]="role.id">
+              {{role.name}}
+            </mat-option>
+          }
+        </mat-select>
+        <mat-hint>Seleccione al menos un rol</mat-hint>
+      </mat-form-field>
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSave()"
+    [disabled]="!staffUserFound() || selectedRoles.length === 0 || isSaving()">
+    @if (isSaving()) {
+      <mat-spinner diameter="20"></mat-spinner>
+    }
+    @if (!isSaving()) {
+      <span>{{ isEditMode() ? 'Actualizar' : 'Agregar' }}</span>
+    }
+  </button>
+</mat-dialog-actions>

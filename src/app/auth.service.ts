@@ -66,7 +66,6 @@ export class AuthService {
       request
     ).pipe(
       tap(response => {
-        debugger;
         if (response.data) {
           this.setToken(response.data.token);
           this.setUser(response.data.user);

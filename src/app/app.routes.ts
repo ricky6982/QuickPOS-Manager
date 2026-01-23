@@ -10,6 +10,7 @@ import { PriceListListComponent } from './price-list/components/price-list-list/
 import { PriceListFormComponent } from './price-list/components/price-list-form/price-list-form';
 import { UserListComponent } from './user/components/user-list/user-list';
 import { UserFormComponent } from './user/components/user-form/user-form';
+import { StaffListComponent } from './staff/components/staff-list/staff-list.component';
 import { OrganizationSelectorComponent } from './login/organization-selector/organization-selector.component';
 import { AuthLayoutComponent } from './layout/auth-layout.component';
 import { authGuard } from './auth.guard';
@@ -41,6 +42,7 @@ export const routes: Routes = [
       { path: 'price-lists', component: PriceListListComponent, canActivate: [organizerSelectedGuard] },
       { path: 'price-lists/new', component: PriceListFormComponent, canActivate: [organizerSelectedGuard] },
       { path: 'price-lists/edit/:id', component: PriceListFormComponent, canActivate: [organizerSelectedGuard] },
+      { path: 'staff', component: StaffListComponent, canActivate: [organizerSelectedGuard] },
     ]
   },
 
